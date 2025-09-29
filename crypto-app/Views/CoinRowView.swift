@@ -45,7 +45,7 @@ struct CoinRowView: View {
 
             // Right side
             VStack(alignment: .trailing, spacing: 6) {
-                Text(formatPrice(coin.currentPrice))
+                Text("$\(coin.currentPrice, specifier: "%.2f")")
                     .font(.headline)
                     .foregroundColor(.white)
 
@@ -68,22 +68,14 @@ struct CoinRowView: View {
     }
 
     private func formatMarketCap(_ num: Double) -> String {
-        if num >= 1_000_000_000 {
+        if num >= 1_000_000_000_000 {
+            return String(format: "$%.2fT", num / 1_000_000_000_000)
+        } else if num >= 1_000_000_000 {
             return String(format: "$%.2fB", num / 1_000_000_000)
         } else if num >= 1_000_000 {
             return String(format: "$%.2fM", num / 1_000_000)
         } else {
             return String(format: "$%.0f", num)
-        }
-    }
-
-    private func formatPrice(_ price: Double) -> String {
-        if price >= 1000 {
-            return String(format: "$%.0f", price)
-        } else if price >= 1 {
-            return String(format: "$%.2f", price)
-        } else {
-            return String(format: "$%.4f", price)
         }
     }
 }
