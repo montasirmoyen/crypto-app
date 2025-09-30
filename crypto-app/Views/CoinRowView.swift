@@ -28,7 +28,7 @@ struct CoinRowView: View {
                         Color.gray.opacity(0.3)
                     }
                 }
-                .frame(width: 40, height: 40)
+                .frame(width: 30, height: 30)
                 .clipShape(Circle())
 
                 VStack(alignment: .leading, spacing: 2) {

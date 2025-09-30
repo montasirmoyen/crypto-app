@@ -46,6 +46,16 @@ struct ContentView: View {
             VStack(spacing: 0) {
                 // Header row
                 HStack {
+                    Text("Market")
+                        .font(.title2)
+                        .foregroundColor(.white)
+                        .bold()
+                        .frame(maxWidth: .infinity)
+                }
+                .background(Color.black)
+                .foregroundColor(.white)
+                
+                HStack {
                     SortHeader(title: "#", isActive: sortColumn == .rank, direction: sortDirection) {
                         toggleSort(column: .rank)
                     }
@@ -58,8 +68,6 @@ struct ContentView: View {
                         toggleSort(column: .change7d)
                     }
                 }
-                .padding(.horizontal)
-                .padding(.vertical, 6)
                 .background(Color.black)
                 .font(.caption)
                 .foregroundColor(.gray)
@@ -78,6 +86,7 @@ struct ContentView: View {
                 .background(Color.black)
             }
         }
+        .background(Color.black)
         .onAppear {
             loadMockData()
         }
