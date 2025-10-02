@@ -10,6 +10,7 @@ import SwiftUI
 struct CoinDetailView: View {
     let coin: Coin
     @Environment(\.dismiss) private var dismiss
+    @State private var isShowingSearch = false
     
     var body: some View {
         VStack(spacing: 16) {
@@ -40,7 +41,7 @@ struct CoinDetailView: View {
                 Spacer()
                 
                 Button(action: {
-                    //dismiss()
+                    isShowingSearch = true
                 }) {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.white)
@@ -107,6 +108,9 @@ struct CoinDetailView: View {
             Spacer()
         }
         .background(Color.black.ignoresSafeArea())
+        .sheet(isPresented: $isShowingSearch) {
+            CoinSearchView()
+        }
         .navigationBarBackButtonHidden(true)
     }
 }
@@ -169,3 +173,4 @@ extension CoinDetailView {
         }
     }
 }
+

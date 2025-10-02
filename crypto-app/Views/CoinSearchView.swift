@@ -28,7 +28,6 @@ struct CoinSearchView: View {
             .listStyle(PlainListStyle())
             .background(Color.black)
             .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search coins")
-            .navigationTitle("Search")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button(action: { dismiss() }) {
