@@ -7,13 +7,15 @@
 
 import Foundation
 
-/* class CoinGeckoAPI {
+/*
+
+class CoinGeckoAPI {
     static let shared = CoinGeckoAPI()
 
     private let apiKey = "..."
 
-    func fetchMarkets() {
-        let url = URL(string: "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&per_page=100&page=1&sparkline=true&price_change_percentage=7d")!
+    func fetchApi() {
+        let url = URL(string: "https://api.coingecko.com/api/v3/global")!
         var request = URLRequest(url: url)
         request.setValue(apiKey, forHTTPHeaderField: "x-cg-api-key")
 
@@ -38,4 +40,6 @@ import Foundation
             }
         }.resume()
     }
-} */
+}
+
+*/

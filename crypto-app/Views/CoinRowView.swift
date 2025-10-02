@@ -45,7 +45,7 @@ struct CoinRowView: View {
 
             // Right side
             VStack(alignment: .trailing, spacing: 6) {
-                Text(formatPrice(coin.currentPrice))
+                Text(coin.currentPrice.asCurrencyString())
                     .font(.headline)
                     .foregroundColor(.white)
 
@@ -66,23 +66,6 @@ struct CoinRowView: View {
         .padding(.horizontal)
         .background(Color.clear)
     }
-    
-    func formatPrice(_ price: Double) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencySymbol = "$"
-        
-        if price >= 1 {
-            formatter.minimumFractionDigits = 2
-            formatter.maximumFractionDigits = 2
-        } else {
-            formatter.minimumFractionDigits = 2
-            formatter.maximumFractionDigits = 8
-        }
-        
-        return formatter.string(from: NSNumber(value: price)) ?? "$\(price)"
-    }
-
 
     private func formatMarketCap(_ num: Double) -> String {
         if num >= 1_000_000_000_000 {

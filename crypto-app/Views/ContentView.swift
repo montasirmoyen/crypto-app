@@ -11,6 +11,10 @@ struct ContentView: View {
     @State private var coins: [Coin] = []
     @State private var sortColumn: SortColumn = .rank
     @State private var sortDirection: SortDirection = .descending
+    @State private var isShowingSearch = false
+    @State private var globalMarketCapUSD: Double?
+    @State private var marketCapChange24h: Double?
+    @State private var activeCryptocurrencies: Int?
 
     var sortedCoins: [Coin] {
         switch sortColumn {
@@ -19,8 +23,8 @@ struct ContentView: View {
                 let leftRank = lhs.marketCapRank ?? 0
                 let rightRank = rhs.marketCapRank ?? 0
                 return sortDirection == .descending
-                    ? leftRank < rightRank
-                    : leftRank > rightRank
+                ? leftRank < rightRank
+                : leftRank > rightRank
             }
             
         case .price:
@@ -28,8 +32,8 @@ struct ContentView: View {
                 let leftPrice = lhs.currentPrice
                 let rightPrice = rhs.currentPrice
                 return sortDirection == .descending
-                    ? leftPrice > rightPrice
-                    : leftPrice < rightPrice
+                ? leftPrice > rightPrice
+                : leftPrice < rightPrice
             }
             
         case .change7d:
@@ -40,58 +44,101 @@ struct ContentView: View {
             }
         }
     }
-
+    
     var body: some View {
         NavigationView {
-            VStack(spacing: 0) {
-                // Header row
-                HStack {
-                    Text("Market")
-                        .font(.title2)
-                        .foregroundColor(.white)
-                        .bold()
-                        .frame(maxWidth: .infinity)
-                }
-                .background(Color.black)
-                .foregroundColor(.white)
-                
-                HStack {
-                    SortHeader(title: "#", isActive: sortColumn == .rank, direction: sortDirection) {
-                        toggleSort(column: .rank)
-                    }
-                    Spacer()
-                    SortHeader(title: "Price", isActive: sortColumn == .price, direction: sortDirection) {
-                        toggleSort(column: .price)
-                    }
-                    Spacer()
-                    SortHeader(title: "7d %", isActive: sortColumn == .change7d, direction: sortDirection) {
-                        toggleSort(column: .change7d)
-                    }
-                }
-                .background(Color.black)
-                .font(.caption)
-                .foregroundColor(.gray)
-
-                // Coin list
-                List(sortedCoins) { coin in
-                    NavigationLink(destination: CoinDetailView(coin: coin)) {
-                        CoinRowView(coin: coin)
-                            .listRowBackground(Color.black)
+            ZStack {
+                Color.black.ignoresSafeArea()
+                VStack(spacing: 0) {
+                    HStack {
+                        Text("Markets")
+                            .font(.title2)
+                            .foregroundColor(.white)
+                            .bold()
                             .background(Color.black)
+                        
+                        Spacer()
+                        
+                        Button(action: {
+                            isShowingSearch = true
+                        }) {
+                            Image(systemName: "magnifyingglass")
+                                .foregroundColor(.white)
+                                .padding(.trailing, 8)
+                                .background(Color.black)
+                        }
+                        .background(Color.black)
                     }
-                    .listRowBackground(Color.black)
+                    .background(Color.black)
+                    .foregroundColor(.white)
+                    .padding(.horizontal)
+                    
+                    if let cap = globalMarketCapUSD {
+                        VStack(alignment: .leading, spacing: 4) {
+                            HStack {
+                                Text("Global Market Cap")
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                                Spacer()
+                                Text(cap.asCurrencyString())
+                                    .font(.subheadline).bold()
+                                    .foregroundColor(.white)
+                            }
+                            
+                            if let change = marketCapChange24h {
+                                Text("\(change >= 0 ? "+" : "")\(String(format: "%.2f", change))%")
+                                    .font(.caption).bold()
+                                    .foregroundColor(change >= 0 ? .green : .red)
+                            }
+                        }
+                        .padding()
+                        .background(Color.gray.opacity(0.1))
+                        .cornerRadius(10)
+                        .padding(.horizontal)
+                        .padding(.vertical)
+                        .background(Color.black)
+                    }
+                    
+                    HStack {
+                        SortHeader(title: "#", isActive: sortColumn == .rank, direction: sortDirection) {
+                            toggleSort(column: .rank)
+                        }
+                        Spacer()
+                        SortHeader(title: "Price", isActive: sortColumn == .price, direction: sortDirection) {
+                            toggleSort(column: .price)
+                        }
+                        Spacer()
+                        SortHeader(title: "7d %", isActive: sortColumn == .change7d, direction: sortDirection) {
+                            toggleSort(column: .change7d)
+                        }
+                    }
+                    .background(Color.black)
+                    .font(.caption)
+                    .foregroundColor(.gray)
+                    
+                    List(sortedCoins) { coin in
+                        NavigationLink(destination: CoinDetailView(coin: coin)) {
+                            CoinRowView(coin: coin)
+                                .listRowBackground(Color.black)
+                                .background(Color.black)
+                        }
+                        .listRowBackground(Color.black)
+                        .background(Color.black)
+                    }
+                    .listStyle(PlainListStyle())
                     .background(Color.black)
                 }
-                .listStyle(PlainListStyle())
-                .background(Color.black)
             }
         }
-        .background(Color.black)
         .onAppear {
             loadMockData()
+            loadMockMarketData()
+        }
+        .sheet(isPresented: $isShowingSearch) {
+            CoinSearchView()
         }
     }
-
+    
     private func toggleSort(column: SortColumn) {
         if sortColumn == column {
             sortDirection = (sortDirection == .descending) ? .ascending : .descending
@@ -100,13 +147,19 @@ struct ContentView: View {
             sortDirection = .descending
         }
     }
-
+    
     private func loadMockData() {
         if let url = Bundle.main.url(forResource: "MockCoinData", withExtension: "json"),
            let data = try? Data(contentsOf: url),
            let decoded = try? JSONDecoder().decode([Coin].self, from: data) {
             coins = decoded
         }
+    }
+    
+    private func loadMockMarketData() {
+        globalMarketCapUSD = 325235325.0
+        marketCapChange24h = 2.25
+        activeCryptocurrencies = 19240
     }
 }
 

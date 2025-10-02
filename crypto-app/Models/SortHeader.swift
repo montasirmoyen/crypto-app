@@ -31,7 +31,7 @@ struct SortHeader: View {
                 if isActive {
                     Image(systemName: "triangle.fill")
                         .rotationEffect(direction != .descending ? .degrees(0) : .degrees(180))
-                        .foregroundColor(.purple)
+                        .foregroundColor(.green)
                         .font(.system(size: 10, weight: .bold))
                 }
             }
