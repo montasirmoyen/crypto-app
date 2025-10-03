@@ -14,7 +14,6 @@ struct ContentView: View {
     @State private var isShowingSearch = false
     @State private var globalMarketCapUSD: Double?
     @State private var marketCapChange24h: Double?
-    @State private var activeCryptocurrencies: Int?
 
     var sortedCoins: [Coin] {
         switch sortColumn {
@@ -71,7 +70,7 @@ struct ContentView: View {
                     }
                     .background(Color.black)
                     .foregroundColor(.white)
-                    .padding(.horizontal)
+                    .padding()
                     
                     if let cap = globalMarketCapUSD {
                         VStack(alignment: .leading, spacing: 4) {
@@ -80,15 +79,14 @@ struct ContentView: View {
                                     .font(.subheadline)
                                     .foregroundColor(.gray)
                                 Spacer()
-                                Text(cap.asCurrencyString())
+                                Text(cap.formatMarketCap())
                                     .font(.subheadline).bold()
                                     .foregroundColor(.white)
-                            }
-                            
-                            if let change = marketCapChange24h {
-                                Text("\(change >= 0 ? "+" : "")\(String(format: "%.2f", change))%")
-                                    .font(.caption).bold()
-                                    .foregroundColor(change >= 0 ? .green : .red)
+                                if let change = marketCapChange24h {
+                                    Text("\(change >= 0 ? "+" : "")\(String(format: "%.2f", change))%")
+                                        .font(.caption).bold()
+                                        .foregroundColor(change >= 0 ? .green : .red)
+                                }
                             }
                         }
                         .padding()
@@ -132,7 +130,7 @@ struct ContentView: View {
         }
         .onAppear {
             loadMockData()
-            loadMockMarketData()
+            // loadMockGlobalData()
         }
         .sheet(isPresented: $isShowingSearch) {
             CoinSearchView()
@@ -156,10 +154,22 @@ struct ContentView: View {
         }
     }
     
-    private func loadMockMarketData() {
-        globalMarketCapUSD = 325235325.0
-        marketCapChange24h = 2.25
-        activeCryptocurrencies = 19240
+    private func loadMockGlobalData() {
+        guard let url = Bundle.main.url(forResource: "MockGlobalData", withExtension: "json"),
+              let data = try? Data(contentsOf: url) else { return }
+        
+        struct GlobalResponse: Decodable {
+            let market_cap_change_percentage_24h_usd: Double
+            let total_market_cap: [String: Double]
+        }
+        
+        do {
+            let decoded = try JSONDecoder().decode(GlobalResponse.self, from: data)
+            marketCapChange24h = decoded.market_cap_change_percentage_24h_usd
+            globalMarketCapUSD = decoded.total_market_cap.values.reduce(0, +)
+        } catch {
+            print("Failed to decode global market data:", error)
+        }
     }
 }
 

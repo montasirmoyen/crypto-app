@@ -23,4 +23,21 @@ extension Double {
         
         return formatter.string(from: NSNumber(value: self)) ?? "$\(self)"
     }
+    
+    func formatMarketCap() -> String {
+        let units = ["", "K", "M", "B", "T", "Q"]
+        var value = self
+        var index = 0
+        
+        while value >= 1000 && index < units.count - 1 {
+            value /= 1000
+            index += 1
+        }
+        
+        if index == 0 {
+            return String(format: "$%.0f", value)
+        } else {
+            return String(format: "$%.2f%@", value, units[index])
+        }
+    }
 }

@@ -35,7 +35,7 @@ struct CoinRowView: View {
                     Text(coin.symbol.uppercased())
                         .font(.headline)
                         .foregroundColor(.white)
-                    Text(formatMarketCap(coin.marketCap))
+                    Text(coin.marketCap.formatMarketCap())
                         .font(.caption)
                         .foregroundColor(.gray)
                 }
@@ -65,18 +65,6 @@ struct CoinRowView: View {
         .padding(.vertical, 10)
         .padding(.horizontal)
         .background(Color.clear)
-    }
-
-    private func formatMarketCap(_ num: Double) -> String {
-        if num >= 1_000_000_000_000 {
-            return String(format: "$%.2fT", num / 1_000_000_000_000)
-        } else if num >= 1_000_000_000 {
-            return String(format: "$%.2fB", num / 1_000_000_000)
-        } else if num >= 1_000_000 {
-            return String(format: "$%.2fM", num / 1_000_000)
-        } else {
-            return String(format: "$%.0f", num)
-        }
     }
 }
 
